@@ -88,9 +88,11 @@ Plug 'padawan-php/deoplete-padawan', { 'do': 'composer install' }
 Plug 'zchee/deoplete-jedi'
 Plug 'BurningEther/iron.nvim'
 " }}}
+" Haskell {{{
+Plug 'neovimhaskell/haskell-vim'
+Plug 'alx741/vim-hindent'
+Plug 'parsonsmatt/intero-neovim'
 " }}}
-" ##### Deoplete {{{
-let g:deoplete#enable_at_startup = 1
 " }}}
 " }}}
 call plug#end()
@@ -248,6 +250,9 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
 " }}}
 " @ Plugin configs  {{{
+" - Deoplete {{{
+let g:deoplete#enable_at_startup = 1
+" }}}
 " - Fugitive  {{{
 " (thanks to Steve Losh's vimrc)
 nnoremap <leader>gd :Gdiff<cr>
