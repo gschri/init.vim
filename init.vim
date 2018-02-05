@@ -7,6 +7,7 @@ call plug#begin('~/.vim/plugged')
 " @ Plugs  {{{
 " - Editor Aesthetics {{{
 Plug 'ryanoasis/vim-devicons'
+Plug 'morhetz/gruvbox'
 Plug 'altercation/vim-colors-solarized'
 Plug 'itchyny/lightline.vim'
 Plug 'itchyny/lightline-powerful'
@@ -76,22 +77,26 @@ Plug 'michalliu/jsruntime.vim'
 Plug 'michalliu/jsoncodecs.vim'
 Plug 'Quramy/vim-js-pretty-template'
 " }}}
-" Typescript {{{
-Plug 'mhartington/nvim-typescript'
-Plug 'leafgarland/typescript-vim'
+" Elm {{{
+Plug 'ElmCast/elm-vim'
+Plug 'pbogut/deoplete-elm'
 " }}}
-" PHP {{{
-Plug 'StanAngeloff/php.vim'
-Plug 'padawan-php/deoplete-padawan', { 'do': 'composer install' }
+" Elixir {{{
+Plug 'kbrw/elixir.nvim'
+Plug 'slashmili/alchemist.vim'
 " }}}
-" Python {{{
-Plug 'zchee/deoplete-jedi'
-Plug 'BurningEther/iron.nvim'
+" Clojure {{{
+Plug 'clojure-vim/acid.nvim'
+Plug 'clojure-vim/async-clj-omni'
 " }}}
-" Haskell {{{
-Plug 'neovimhaskell/haskell-vim'
-Plug 'alx741/vim-hindent'
-Plug 'parsonsmatt/intero-neovim'
+" Terraform {{{
+Plug 'hashivim/vim-terraform'
+" }}}
+" Vault {{{
+Plug 'hashivim/vim-vaultproject'
+" }}}
+" Packer {{{
+Plug 'hashivim/vim-packer'
 " }}}
 " }}}
 " }}}
@@ -175,9 +180,9 @@ set autoread
 " Enable syntax highlighting
 syntax on
 " Sets the colorscheme for terminal sessions too.
-colorscheme solarized
-autocmd BufEnter * colorscheme solarized
-set background=light
+colorscheme gruvbox
+autocmd BufEnter * colorscheme gruvbox
+set background=dark
 set t_Co=256
 
 " stop anoying large completion menu
@@ -250,6 +255,11 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
 " }}}
 " @ Plugin configs  {{{
+" Terraform {{{
+let g:terraform_align=1
+let g:terraform_fold_sections=1
+let g:terraform_remap_spacebar=1
+" }}}
 " - Deoplete {{{
 let g:deoplete#enable_at_startup = 1
 " }}}
@@ -275,7 +285,7 @@ let g:NERDTreeHijackNetrw = 0
 " }}}
 " - Lightline  {{{
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
+      \ 'colorscheme': 'gruvbox',
       \ 'component_function': {
       \   'filetype': 'MyFiletype',
       \   'fileformat': 'MyFileformat',
@@ -375,6 +385,9 @@ endfunction
 " }}}
 " }}}
 " @ Filetype-specific  {{{
+" ##### Terraform {{{
+autocmd FileType terraform setlocal commentstring=#%s
+" }}}
 " ##### Markdown  {{{
 " Sets markdown syntax for *.md files.
 autocmd BufRead,BufNewFile *.md set filetype=markdown
@@ -407,94 +420,6 @@ nnoremap <leader>xb :%s,>[ <tab>]*<,>\r<,g<cr> gg=G
 " ##### SQL {{{
 " SQL to CSV
 nnoremap <leader>csv ggV/^+-<cr>dGV?^+-<cr>dgg:g/^+-/d<cr>:%s/^<bar> \<bar> <bar>$//g<cr>:%s/ *<bar> */,/g<cr>
-" }}}
-" ##### Haskell {{{
-
-" ----- parsonsmatt/intero-neovim -----
-augroup interoMaps
-  au!
-  " Maps for intero. Restrict to Haskell buffers so the bindings don't collide.
-
-  " Background process and window management
-  au FileType haskell nnoremap <silent> <leader>is :InteroStart<CR>
-  au FileType haskell nnoremap <silent> <leader>ik :InteroKill<CR>
-
-  " Open intero/GHCi split horizontally
-  au FileType haskell nnoremap <silent> <leader>io :InteroOpen<CR>
-  " Open intero/GHCi split vertically
-  au FileType haskell nnoremap <silent> <leader>iov :InteroOpen<CR><C-W>H
-  au FileType haskell nnoremap <silent> <leader>ih :InteroHide<CR>
-
-  " Reloading (pick one)
-  " Automatically reload on save
-  au BufWritePost *.hs InteroReload
-  " Manually save and reload
-  au FileType haskell nnoremap <silent> <leader>wr :w \| :InteroReload<CR>
-
-  " Load individual modules
-  au FileType haskell nnoremap <silent> <leader>il :InteroLoadCurrentModule<CR>
-  au FileType haskell nnoremap <silent> <leader>if :InteroLoadCurrentFile<CR>
-
-  " Type-related information
-  " Heads up! These next two differ from the rest.
-  au FileType haskell map <silent> <leader>t <Plug>InteroGenericType
-  au FileType haskell map <silent> <leader>T <Plug>InteroType
-  au FileType haskell nnoremap <silent> <leader>it :InteroTypeInsert<CR>
-
-  " Navigation
-  au FileType haskell nnoremap <silent> <leader>jd :InteroGoToDef<CR>
-
-  " Managing targets
-  " Prompts you to enter targets (no silent):
-  au FileType haskell nnoremap <leader>ist :InteroSetTargets<SPACE>
-augroup END
-
-" Intero starts automatically. Set this if you'd like to prevent that.
-let g:intero_start_immediately = 0
-
-" ----- neovimhaskell/haskell-vim -----
-
-" Align 'then' two spaces after 'if'
-let g:haskell_indent_if = 2
-" Indent 'where' block two spaces under previous body
-let g:haskell_indent_before_where = 2
-" Allow a second case indent style (see haskell-vim README)
-let g:haskell_indent_case_alternative = 1
-" Only next under 'let' if there's an equals sign
-let g:haskell_indent_let_no_in = 0
-
-" ----- hindent & stylish-haskell -----
-
-" Indenting on save is too aggressive for me
-let g:hindent_on_save = 0
-
-" Helper function, called below with mappings
-function! HaskellFormat(which) abort
-  if a:which ==# 'hindent' || a:which ==# 'both'
-    :Hindent
-  endif
-  if a:which ==# 'stylish' || a:which ==# 'both'
-    silent! exe 'undojoin'
-    silent! exe 'keepjumps %!stylish-haskell'
-  endif
-endfunction
-
-" Key bindings
-augroup haskellStylish
-  au!
-  " Just hindent
-  au FileType haskell nnoremap <leader>hi :Hindent<CR>
-  " Just stylish-haskell
-  au FileType haskell nnoremap <leader>hs :call HaskellFormat('stylish')<CR>
-  " First hindent, then stylish-haskell
-  au FileType haskell nnoremap <leader>hf :call HaskellFormat('both')<CR>
-augroup END
-
-" ----- w0rp/ale -----
-
-let g:ale_linters = {
-  \ 'haskell': ['stack-ghc-mod', 'hlint']
-  \ }
 " }}}
 " ##### LookML {{{
 " Sets YAML syntax for *.lookml files.
