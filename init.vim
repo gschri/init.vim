@@ -81,13 +81,25 @@ Plug 'Quramy/vim-js-pretty-template'
 Plug 'ElmCast/elm-vim'
 Plug 'pbogut/deoplete-elm'
 " }}}
-" Elixir {{{
-Plug 'kbrw/elixir.nvim'
-Plug 'slashmili/alchemist.vim'
+" Vue {{{
+Plug 'posva/vim-vue'
 " }}}
 " Clojure {{{
+Plug 'tpope/vim-fireplace'
+Plug 'markwoodhall/vim-figwheel'
+Plug 'tpope/vim-salve'
+Plug 'guns/vim-clojure-static'
 Plug 'clojure-vim/acid.nvim'
 Plug 'clojure-vim/async-clj-omni'
+Plug 'snoe/clj-refactor.nvim'
+Plug 'guns/vim-sexp'
+Plug 'shaunlebron/parinfer'
+" }}}
+" Docker {{{
+Plug 'zchee/deoplete-docker'
+" }}}
+" Ruby {{{
+Plug 'fishbullet/deoplete-ruby'
 " }}}
 " Terraform {{{
 Plug 'hashivim/vim-terraform'
@@ -97,6 +109,12 @@ Plug 'hashivim/vim-vaultproject'
 " }}}
 " Packer {{{
 Plug 'hashivim/vim-packer'
+" }}}
+" Nginx {{{
+Plug 'chr4/nginx.vim'
+" }}}
+" Consul {{{
+Plug 'hashivim/vim-consul'
 " }}}
 " }}}
 " }}}
@@ -255,7 +273,11 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
 " }}}
 " @ Plugin configs  {{{
-" Terraform {{{
+" - Clojure {{{
+let g:deoplete#keyword_patterns = {}
+let g:deoplete#keyword_patterns.clojure = '[\w!$%&*+/:<=>?@\^_~\-\.#]*'
+" }}}
+" - Terraform {{{
 let g:terraform_align=1
 let g:terraform_fold_sections=1
 let g:terraform_remap_spacebar=1
