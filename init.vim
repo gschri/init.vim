@@ -65,11 +65,11 @@ Plug 'editorconfig/editorconfig-vim'
 " SCSS {{{
 Plug 'cakebaker/scss-syntax.vim'
 " }}}
-" HTML {{{
-Plug 'mattn/emmet-vim'
-" }}}
 " CSS {{{
 Plug 'hail2u/vim-css3-syntax'
+" }}}
+" HTML {{{
+Plug 'mattn/emmet-vim'
 " }}}
 " Javascript {{{ 
 Plug 'pangloss/vim-javascript'
@@ -77,44 +77,9 @@ Plug 'michalliu/jsruntime.vim'
 Plug 'michalliu/jsoncodecs.vim'
 Plug 'Quramy/vim-js-pretty-template'
 " }}}
-" Elm {{{
-Plug 'ElmCast/elm-vim'
-Plug 'pbogut/deoplete-elm'
-" }}}
-" Vue {{{
-Plug 'posva/vim-vue'
-" }}}
-" Clojure {{{
-Plug 'tpope/vim-fireplace'
-Plug 'markwoodhall/vim-figwheel'
-Plug 'tpope/vim-salve'
-Plug 'guns/vim-clojure-static'
-Plug 'clojure-vim/acid.nvim'
-Plug 'clojure-vim/async-clj-omni'
-Plug 'snoe/clj-refactor.nvim'
-Plug 'guns/vim-sexp'
-Plug 'shaunlebron/parinfer'
-" }}}
-" Docker {{{
-Plug 'zchee/deoplete-docker'
-" }}}
-" Ruby {{{
-Plug 'fishbullet/deoplete-ruby'
-" }}}
-" Terraform {{{
-Plug 'hashivim/vim-terraform'
-" }}}
-" Vault {{{
-Plug 'hashivim/vim-vaultproject'
-" }}}
-" Packer {{{
-Plug 'hashivim/vim-packer'
-" }}}
-" Nginx {{{
-Plug 'chr4/nginx.vim'
-" }}}
-" Consul {{{
-Plug 'hashivim/vim-consul'
+" Typescript {{{
+Plug 'mhartington/nvim-typescript'
+Plug 'leafgarland/typescript-vim'
 " }}}
 " }}}
 " }}}
@@ -273,10 +238,6 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
 " }}}
 " @ Plugin configs  {{{
-" - Clojure {{{
-let g:deoplete#keyword_patterns = {}
-let g:deoplete#keyword_patterns.clojure = '[\w!$%&*+/:<=>?@\^_~\-\.#]*'
-" }}}
 " - Terraform {{{
 let g:terraform_align=1
 let g:terraform_fold_sections=1
@@ -454,9 +415,5 @@ autocmd BufRead,BufNewFile *.lookml set filetype=yaml
 autocmd BufWritePost *.tex !pdflatex %
 " Set textwidth to 80 columns
 autocmd FileType tex set textwidth=80
-" }}}
-" ##### Elixir {{{
-" Enable autocomplete using deoplete
-autocmd FileType elixir nnoremap <leader>rt :call VimuxRunCommand("mix test " . bufname("%"))<CR>
 " }}}
 " }}}
