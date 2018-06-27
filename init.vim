@@ -77,9 +77,18 @@ Plug 'michalliu/jsruntime.vim'
 Plug 'michalliu/jsoncodecs.vim'
 Plug 'Quramy/vim-js-pretty-template'
 " }}}
-" Typescript {{{
-Plug 'mhartington/nvim-typescript'
-Plug 'leafgarland/typescript-vim'
+" Elm {{{
+Plug 'ElmCast/elm-vim'
+Plug 'pbogut/deoplete-elm'
+" }}}
+" Elixir {{{
+Plug 'elixir-editors/vim-elixir'
+Plug 'mhinz/vim-mix-format'
+Plug 'slashmili/alchemist.vim'
+" }}}
+" Ocaml {{{
+Plug 'rgrinberg/vim-ocaml'
+Plug 'copy/deoplete-ocaml'
 " }}}
 " }}}
 " }}}
@@ -238,11 +247,14 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
 " }}}
 " @ Plugin configs  {{{
-" - Terraform {{{
-let g:terraform_align=1
-let g:terraform_fold_sections=1
-let g:terraform_remap_spacebar=1
-" }}}
+" - Ocaml {{{
+let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+execute "set rtp+=" . g:opamshare . "/merlin/vim"
+"   }}}
+" - Elixir {{{
+let g:mix_format_on_save = 1
+" set formatprg=mix\ format\ -
+"   }}}
 " - Deoplete {{{
 let g:deoplete#enable_at_startup = 1
 " }}}
