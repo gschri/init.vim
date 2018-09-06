@@ -17,7 +17,12 @@ Plug 'michalliu/sourcebeautify.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
+Plug 'thinca/vim-visualstar'
 " }}}
+" - Tools {{{
+Plug 'vimwiki/vimwiki'
+Plug 'junegunn/vim-easy-align'
+"   }}}
 " - Search {{{
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mileszs/ack.vim'
@@ -51,8 +56,6 @@ Plug 'w0rp/ale'
 " }}}
 " - Completion {{{
 Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-completion-manager'
-Plug 'roxma/python-support.nvim'
 " }}}
 " - Languages {{{
 " Vim {{{
@@ -77,24 +80,40 @@ Plug 'michalliu/jsruntime.vim'
 Plug 'michalliu/jsoncodecs.vim'
 Plug 'Quramy/vim-js-pretty-template'
 " }}}
-" Elm {{{
-Plug 'ElmCast/elm-vim'
-Plug 'pbogut/deoplete-elm'
+" C/C++ {{{
+" Plug 'zchee/deoplete-clang'
 " }}}
-" Elixir {{{
-Plug 'elixir-editors/vim-elixir'
-Plug 'mhinz/vim-mix-format'
-Plug 'slashmili/alchemist.vim'
+" Scala {{{
+Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' } 
+Plug 'derekwyatt/vim-scala'
 " }}}
-" Ocaml {{{
-Plug 'rgrinberg/vim-ocaml'
-Plug 'copy/deoplete-ocaml'
+" GLSL {{{
+Plug 'tikhomirov/vim-glsl'
+" }}}
+" Processing {{{
+Plug 'sophacles/vim-processing'
 " }}}
 " }}}
 " }}}
 call plug#end()
 filetype plugin indent on    " required
 " @ Base options  {{{
+" Popup menu options {{{
+" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
+" found' messages
+set shortmess+=c
+
+" CTRL-C doesn't trigger the InsertLeave autocmd . map to <ESC> instead.
+inoremap <c-c> <ESC>
+
+" When the <Enter> key is pressed while the popup menu is visible, it only
+" hides the menu. Use this mapping to close the menu and also start a new
+" line.
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+" Use <TAB> to select the popup menu:
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" }}}
 " Display incomplete commands.
 set showcmd
 " Display the mode you're in.
@@ -158,7 +177,17 @@ set foldmethod=indent
 " Show the status line all the time
 set laststatus=2
 " Useful status information at bottom of screen
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P
+set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{StatusLineGit()}%=%-16(\ %l,%c-%v\ %)%P
+
+function! GitBranch()
+  return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+endfunction
+
+function! StatusLineGit()
+  let l:branchname = GitBranch()
+  return strlen(l:branchname) > 0 ? ' '.l:branchname.' ':''
+endfunction
+
 
 " Always diff using vertical mode
 set diffopt+=vertical
@@ -172,9 +201,9 @@ set autoread
 " Enable syntax highlighting
 syntax on
 " Sets the colorscheme for terminal sessions too.
-colorscheme gruvbox
-autocmd BufEnter * colorscheme gruvbox
-set background=dark
+set background=light
+colorscheme solarized
+autocmd BufEnter * colorscheme solarized
 set t_Co=256
 
 " stop anoying large completion menu
@@ -245,33 +274,26 @@ nnoremap <leader>fs :set lines=999 columns=9999<cr>
 " Fix C-h on Neovim (read https://github.com/christoomey/vim-tmux-navigator#it-doesnt-work-in-neovim-specifically-c-h)
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " }}}
+" Terminal mode {{{
+" To map <Esc> to exit terminal-mode:
+tnoremap <Esc> <C-\><C-n>
+
+" To simulate |i_CTRL-R| in terminal-mode:
+tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+
+" To use `CTRL+{h,j,kl}` to navigate windows from terminal mode:
+tnoremap <silent> <c-h> <C-\><C-N>:TmuxNavigateLeft<cr>
+tnoremap <silent> <c-j> <C-\><C-N>:TmuxNavigateDown<cr>
+tnoremap <silent> <c-k> <C-\><C-N>:TmuxNavigateUp<cr>
+tnoremap <silent> <c-l> <C-\><C-N>:TmuxNavigateRight<cr>
+" }}}
 " }}}
 " @ Plugin configs  {{{
-" - Ocaml {{{
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
-"   }}}
-" - Elixir {{{
-let g:mix_format_on_save = 1
-" set formatprg=mix\ format\ -
-"   }}}
-" - Deoplete {{{
+"   - Deoplete {{{
 let g:deoplete#enable_at_startup = 1
-" }}}
-" - Fugitive  {{{
-" (thanks to Steve Losh's vimrc)
-nnoremap <leader>gd :Gdiff<cr>
-nnoremap <leader>gs :Gstatus<cr>
-nnoremap <leader>gw :Gwrite<cr>
-nnoremap <leader>ga :Gadd<cr>
-nnoremap <leader>gb :Gblame<cr>
-nnoremap <leader>gci :Gcommit<cr>
-nnoremap <leader>ge :Gedit<cr>
-nnoremap <leader>gm :Gmove
-nnoremap <leader>gr :Gread<cr>
-nnoremap <leader>grm :Gremove<cr>
-nnoremap <leader>gp :Git push
-" }}}
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/x86_64-linux-gnu/libclang-3.8.so.1'
+let g:deoplete#sources#clang#clang_header = '/usr/include/clang/3.8/include'
+"   }}}
 " - NERDTree  {{{
 noremap <leader>ft :NERDTreeToggle<CR>
 
@@ -280,10 +302,11 @@ let g:NERDTreeHijackNetrw = 0
 " }}}
 " - Lightline  {{{
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'solarized',
       \ 'component_function': {
       \   'filetype': 'MyFiletype',
       \   'fileformat': 'MyFileformat',
+      \   'gitbranch': 'StatusLineGit',
       \ }
       \ }
 
@@ -331,6 +354,14 @@ nnoremap <leader>rc :VimuxPromptCommand<CR>
 nnoremap <leader>rr :VimuxRunLastCommand <CR>
 nnoremap <leader>rz :VimuxZoomRunner <CR>
 " }}}
+" - Tmux {{{
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
+"   }}}
 " }}}
 " @ Utility functions {{{
 " ##### Number toggle  {{{
@@ -341,7 +372,6 @@ function! NumberToggle()
 		set relativenumber
 	endif
 endfunc
-
 nnoremap <leader>ll :call NumberToggle()<cr>
 "}}}
 " ##### Ack motions {{{
@@ -380,8 +410,11 @@ endfunction
 " }}}
 " }}}
 " @ Filetype-specific  {{{
-" ##### Terraform {{{
-autocmd FileType terraform setlocal commentstring=#%s
+" Scala {{{
+autocmd BufWritePost *.scala silent :EnTypeCheck
+au FileType scala nnoremap <localleader>t :EnType<CR>
+au FileType scala nnoremap <localleader>df :EnDeclaration<CR>
+
 " }}}
 " ##### Markdown  {{{
 " Sets markdown syntax for *.md files.
@@ -390,10 +423,12 @@ autocmd BufRead,BufNewFile *.md set filetype=markdown
 " Wrap markdown files.
 autocmd BufRead,BufNewFile *.md set wrap
 
-autocmd BufEnter *.md colorscheme solarized
-
 " Set textwidth to 80 columns
 autocmd FileType md set textwidth=80
+" }}}
+" ##### Boot {{{
+" Sets clojure{script} syntax for  *.boot files.
+autocmd BufRead,BufNewFile *.boot set filetype=clojure
 " }}}
 " ##### JavaScript  {{{
 " Sets javascript syntax for *.json files.
@@ -401,6 +436,11 @@ autocmd BufRead,BufNewFile *.json set filetype=javascript
 
 " Sets html syntax for *.ejs files.
 autocmd BufRead,BufNewFile *.ejs set filetype=html
+" }}}
+" ##### Racc {{{
+" Sets ruby syntax for *.y files.
+autocmd BufRead,BufNewFile *.y set filetype=ruby
+" }}}
 " }}}
 " ##### Vim {{{
 " Make vimrcs open folded
